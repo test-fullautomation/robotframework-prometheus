@@ -1,0 +1,19 @@
+{
+   "REPOSITORYNAME" : "robotframework-prometheus",
+   "PACKAGENAME" : "prometheus_interface",
+   "AUTHOR" : "Holger Queckenstedt",
+   "AUTHOREMAIL" : "Holger.Queckenstedt@de.bosch.com",
+   "DESCRIPTION" : "Additional Robot Framework keywords",
+   "LONGDESCRIPTIONCONTENTTYPE" : "text/markdown",
+   "URL" : "https://github.com/test-fullautomation/robotframework-prometheus",
+   "PROGRAMMINGLANGUAGE" : "Programming Language :: Python :: 3",
+   "LICENCE" : "License :: OSI Approved :: Apache Software License",
+   "OPERATINGSYSTEM" : "Operating System :: OS Independent",
+   "PYTHONREQUIRES" : ">=3.0",
+   "DEVELOPMENTSTATUS" : "Development Status :: 4 - Beta",
+   "INTENDEDAUDIENCE" : "Intended Audience :: Developers",
+   "TOPIC" : "Topic :: Software Development",
+   "INSTALLREQUIRES" : ["PythonExtensionsCollection","robotframework"],
+   "PACKAGEDATA" : ["*.pdf"],
+   "PACKAGEDOC" : "./packagedoc"
+}
