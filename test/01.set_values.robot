@@ -12,20 +12,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# version 21.05.2024
+
 *** Settings ***
 
 # Robot Framework Built-In libraries
 Library    Collections
 Library    BuiltIn
 
-# own libraries
+# specific libraries
 Library    RobotframeworkExtensions.Collection    WITH NAME    rf.extensions
 
-# >>> prometheus interface
-# repository local prometheus interface
+# >>> Prometheus interface
+# repository local Prometheus interface
 Library    ../prometheus_interface/prometheus_interface.py
 #
-# installed prometheus interface
+# installed Prometheus interface
 # Library    %{ROBOTPYTHONSITEPACKAGESPATH}/prometheus_interface/prometheus_interface.py
 # <<< prometheus interface
 
