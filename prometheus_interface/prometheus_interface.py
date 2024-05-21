@@ -18,7 +18,7 @@
 import pickle, os, time, random
 import dotdict
 
-from prometheus_client import start_http_server, Gauge
+from prometheus_client import start_http_server, Gauge, Counter
 
 # -- import Robotframework API
 from robot.api.deco import keyword, library # required when using @keyword, @library decorators
@@ -48,15 +48,15 @@ class prometheus_interface():
     # --------------------------------------------------------------------------------------------------------------
     #TM***
 
-    def __init__(self, sThisModule=sThisModule, sMessageLevel="INFO"):
+    def __init__(self, sThisModule=sThisModule, sPortNumber=8000, sMessageLevel="INFO"):
 
         self.__sThisModule = sThisModule
-        self.sMessageLevel = sMessageLevel
+        self.__sMessageLevel = sMessageLevel
 
-        # Starte den HTTP-Server auf Port 8000
-        start_http_server(8000)
-
+        self.__dictCounter = {}
         self.__dictGauges = {}
+
+        start_http_server(sPortNumber)
 
 
     def __del__(self):
@@ -64,6 +64,51 @@ class prometheus_interface():
 
     # --------------------------------------------------------------------------------------------------------------
     #TM***
+
+    @keyword
+    def add_counter(self, name=None, description=None, labels=None):
+        """add_counter
+        """
+        if name not in self.__dictCounter:
+            labellist = labels.split(';')
+            listLabels = []
+            for label in labellist:
+                label = label.strip()
+                listLabels.append(label)
+            oCounter = Counter(name, description, listLabels)
+            self.__dictCounter[name] = oCounter
+    # eof def add_counter(...):
+
+    @keyword
+    def inc_counter(self, name=None, value=None, labels=None):
+        """inc_counter
+        """
+        labellist = labels.split(';')
+        listLabels = []
+        for label in labellist:
+            label = label.strip()
+            listLabels.append(label)
+        oCounter = self.__dictCounter[name]     # TODO: error handling
+        # the following is not nice, but 'oCounter.labels(listLabels).inc(value)' does not work / error: 'incorrect label count' / investigation to be done
+        listLabels_2 = []
+        for label in listLabels:
+           listLabels_2.append(f"\"{label}\"")
+        sLabels = ", ".join(listLabels_2)
+        if value is None:
+            value = 1
+        sCode = f"oCounter.labels({sLabels}).inc(value)"
+        bSuccess = True
+        sResult = f"counter '{name}' incremented by value '{value}' with labels: '{labels}'"
+        try:
+           exec(sCode)
+        except Exception as ex:
+           bSuccess = False
+           sResult  = str(ex)
+        return bSuccess, sResult
+
+    # eof def inc_counter(...):
+
+    # --------------------------------------------------------------------------------------------------------------
 
     @keyword
     def add_gauge(self, name=None, description=None, labels=None):
@@ -88,7 +133,7 @@ class prometheus_interface():
         for label in labellist:
             label = label.strip()
             listLabels.append(label)
-        oGauge = self.__dictGauges[name]
+        oGauge = self.__dictGauges[name]              # TODO: error handling
         # the following is not nice, but 'oGauge.labels(listLabels).set(value)' does not work / error: 'incorrect label count' / investigation to be done
         listLabels_2 = []
         for label in listLabels:
