@@ -30,7 +30,7 @@ from PythonExtensionsCollection.Utils.CUtils import *
 # --------------------------------------------------------------------------------------------------------------
 
 sThisModuleName    = "prometheus_interface.py"
-sThisModuleVersion = "0.1.0"                         # TODO: import from version.py
+sThisModuleVersion = "0.1.1"                         # TODO: import from version.py
 sThisModuleDate    = "16.05.2024"                    # TODO: import from version.py
 sThisModule        = f"{sThisModuleName} v. {sThisModuleVersion} / {sThisModuleDate}"
 
@@ -48,16 +48,15 @@ class prometheus_interface():
     # --------------------------------------------------------------------------------------------------------------
     #TM***
 
-    def __init__(self, sThisModule=sThisModule, sPortNumber=8000, sMessageLevel="INFO"):
+    def __init__(self, sThisModule=sThisModule, port_number=8000, message_level="INFO"):
 
-        self.__sThisModule = sThisModule
-        self.__sMessageLevel = sMessageLevel
+        self.__sThisModule   = sThisModule
+        self.__sMessageLevel = message_level
 
         self.__dictCounter = {}
-        self.__dictGauges = {}
+        self.__dictGauges  = {}
 
-        start_http_server(sPortNumber)
-
+        start_http_server(port_number)
 
     def __del__(self):
         del self.__dictGauges
