@@ -30,8 +30,8 @@ from PythonExtensionsCollection.Utils.CUtils import *
 # --------------------------------------------------------------------------------------------------------------
 
 sThisModuleName    = "prometheus_interface.py"
-sThisModuleVersion = "0.1.1"                         # TODO: import from version.py
-sThisModuleDate    = "16.05.2024"                    # TODO: import from version.py
+sThisModuleVersion = "0.2.0"                         # TODO: import from version.py
+sThisModuleDate    = "22.05.2024"                    # TODO: import from version.py
 sThisModule        = f"{sThisModuleName} v. {sThisModuleVersion} / {sThisModuleDate}"
 
 # --------------------------------------------------------------------------------------------------------------
@@ -127,6 +127,7 @@ class prometheus_interface():
     def set_gauge(self, name=None, value=None, labels=None):
         """set_gauge
         """
+        ## debug: BuiltIn().log(f"set_gauge: name: '{name}' / value: '{value}' / labels: '{labels}'", "WARN")
         labellist = labels.split(';')
         listLabels = []
         for label in labellist:
