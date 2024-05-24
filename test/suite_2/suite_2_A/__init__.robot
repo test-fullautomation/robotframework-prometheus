@@ -33,11 +33,21 @@ Prometheus Suite Setup
     tm.testsuite_setup    ./config/variants_config.json
 
     # setup of Prometheus counter and gauges
-    Add Counter    name=num_passed     description=: number of passed tests     labels=room;testbench;testname;testresult
-    Add Counter    name=num_failed     description=: number of failed tests     labels=room;testbench;testname;testresult
-    Add Counter    name=num_unknown    description=: number of unknown tests    labels=room;testbench;testname;testresult
+    ${success}    ${result}    rf.prometheus_interface.add_counter    name=num_passed     description=: number of passed tests     labels=room;testbench;testname;testresult
+    rf.extensions.pretty_print    [add_counter] (${success}) : ${result}
+    ${success}    ${result}    rf.prometheus_interface.add_counter    name=num_failed     description=: number of failed tests     labels=room;testbench;testname;testresult
+    rf.extensions.pretty_print    [add_counter] (${success}) : ${result}
+    ${success}    ${result}    rf.prometheus_interface.add_counter    name=num_unknown    description=: number of unknown tests    labels=room;testbench;testname;testresult
+    rf.extensions.pretty_print    [add_counter] (${success}) : ${result}
 
-    Add Gauge    name=beats_per_minute    description=: current beats per minute     labels=room;testbench
+    ${success}    ${result}    rf.prometheus_interface.add_gauge    name=beats_per_minute    description=: current beats per minute     labels=room;testbench
+    rf.extensions.pretty_print    [add_gauge] (${success}) : ${result}
+
+    rf.prometheus_interface.add_info
+
+    rf.prometheus_interface.add_lighting
+    rf.prometheus_interface.set_daylight
+
 
 Prometheus Suite Teardown
     [Documentation]    Prometheus Suite Teardown
