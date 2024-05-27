@@ -18,6 +18,6 @@
 #
 # Version and date of robotframework_prometheus
 #
-VERSION      = "0.2.0"
-VERSION_DATE = "24.05.2024"
+VERSION      = "0.3.0"
+VERSION_DATE = "27.05.2024"
 

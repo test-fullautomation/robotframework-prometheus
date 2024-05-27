@@ -22,8 +22,8 @@
 #
 # **************************************************************************************************************
 #
-VERSION      = "0.3.0"
-VERSION_DATE = "24.05.2024"
+VERSION      = "0.4.0"
+VERSION_DATE = "27.05.2024"
 #
 # **************************************************************************************************************
 
@@ -182,9 +182,19 @@ Prometheus Set Values Execution ##EXECUTION_NAME##
 
    ${success}    ${result}    rf.prometheus_interface.inc_counter    name=##COUNTER##    labels=Room_1;##TESTBENCH##;##TEST_NAME##;##TEST_RESULT##
    rf.extensions.pretty_print    [inc_counter] (${success}) : ${result}
+   ${success}    ${result}    rf.prometheus_interface.inc_counter    name=##COUNTER##    value=2    labels=Room_1;##TESTBENCH##;##TEST_NAME##;##TEST_RESULT##
+   rf.extensions.pretty_print    [inc_counter] (${success}) : ${result}
 
    ${success}    ${result}    rf.prometheus_interface.set_gauge    name=beats_per_minute    value=##BEATS_PER_MINUTE##    labels=Room_1;##TESTBENCH##
    rf.extensions.pretty_print    [set_gauge] (${success}) : ${result}
+   ${success}    ${result}    rf.prometheus_interface.inc_gauge    name=beats_per_minute    labels=Room_1;##TESTBENCH##
+   rf.extensions.pretty_print    [inc_gauge] (${success}) : ${result}
+   ${success}    ${result}    rf.prometheus_interface.inc_gauge    name=beats_per_minute    value=5    labels=Room_1;##TESTBENCH##
+   rf.extensions.pretty_print    [inc_gauge] (${success}) : ${result}
+   ${success}    ${result}    rf.prometheus_interface.dec_gauge    name=beats_per_minute    labels=Room_1;##TESTBENCH##
+   rf.extensions.pretty_print    [dec_gauge] (${success}) : ${result}
+   ${success}    ${result}    rf.prometheus_interface.dec_gauge    name=beats_per_minute    value=2    labels=Room_1;##TESTBENCH##
+   rf.extensions.pretty_print    [dec_gauge] (${success}) : ${result}
 
    ##LIGHTING##
 
@@ -193,7 +203,7 @@ Prometheus Set Values Execution ##EXECUTION_NAME##
 
 # --------------------------------------------------------------------------------------------------------------
 #TM***
-nNrOfFiles = 900
+nNrOfFiles = 20 # 20 / 999
 sSleep     = "2s"
 # --------------------------------------------------------------------------------------------------------------
 
