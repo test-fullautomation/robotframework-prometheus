@@ -29,7 +29,7 @@
 #
 # --------------------------------------------------------------------------------------------------------------
 #
-# 16.05.2024
+# 23.05.2024
 #
 # --------------------------------------------------------------------------------------------------------------
 
@@ -39,8 +39,8 @@ import pypandoc
 
 from PythonExtensionsCollection.String.CString import CString
 
-from prometheus_interface.version import VERSION
-from prometheus_interface.version import VERSION_DATE
+from PrometheusInterface.version import VERSION
+from PrometheusInterface.version import VERSION_DATE
 
 col.init(autoreset=True)
 COLBR = col.Style.BRIGHT + col.Fore.RED

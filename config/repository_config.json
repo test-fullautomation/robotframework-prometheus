@@ -1,6 +1,6 @@
 {
    "REPOSITORYNAME" : "robotframework-prometheus",
-   "PACKAGENAME" : "prometheus_interface",
+   "PACKAGENAME" : "PrometheusInterface",
    "AUTHOR" : "Holger Queckenstedt",
    "AUTHOREMAIL" : "Holger.Queckenstedt@de.bosch.com",
    "DESCRIPTION" : "Additional Robot Framework keywords",

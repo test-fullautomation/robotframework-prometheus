@@ -12,8 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# version 21.05.2024
-
 *** Settings ***
 
 # Robot Framework Built-In libraries
@@ -25,9 +23,9 @@ Library    RobotframeworkExtensions.Collection    WITH NAME    rf.extensions
 
 # # >>> Prometheus interface
 # # repository local Prometheus interface
-Library    ../../../prometheus_interface/prometheus_interface.py    port_number=${8002}
+# # Library    ../../../PrometheusInterface/prometheus_interface.py    port_number=${8002}    WITH NAME    rf.prometheus_interface
 # #
 # # installed Prometheus interface
-# # Library    %{ROBOTPYTHONSITEPACKAGESPATH}/prometheus_interface/prometheus_interface.py    port_number=${8002}
+Library    %{ROBOTPYTHONSITEPACKAGESPATH}/PrometheusInterface/prometheus_interface.py    port_number=${8002}    WITH NAME    rf.prometheus_interface
 # # <<< prometheus interface
 
