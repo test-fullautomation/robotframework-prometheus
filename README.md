@@ -12,7 +12,7 @@ available up to now, is not ready for being used in productive systems
 A (growing) detailed documentation of the **prometheus_interface** can
 be found here:
 
-[prometheus_interface.pdf](https://github.com/test-fullautomation/robotframework-prometheus/blob/develop/prometheus_interface/prometheus_interface.pdf)
+[prometheus_interface.pdf](https://github.com/test-fullautomation/robotframework-prometheus/blob/develop/PrometheusInterface/PrometheusInterface.pdf)
 
 ## Feedback
 

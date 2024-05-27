@@ -100,8 +100,7 @@ class prometheus_interface():
 
    @keyword
    def add_info(self):
-      """add_info
-         (content currently hard coded here)
+      """add_info (content currently hard coded here)
       """
       oInfo = Info('prometheus_interface', ': name and version of prometheus interface')
       oInfo.info({'interface': f"{THISMODULE}", 'version': f"{LIBRARY_VERSION}"})
@@ -306,6 +305,121 @@ class prometheus_interface():
       sResult = " ".join(listResults)
       return bSuccess, sResult
    # eof def set_gauge(...):
+
+   @keyword
+   def inc_gauge(self, name=None, value=None, labels=None):
+      """inc_gauge
+      """
+      bSuccess = False
+      sResult  = "UNKNOWN"
+      if name is None:
+         sResult = "parameter 'name' not defined"
+         return bSuccess, sResult
+      if name not in self.__dictGauges:
+         sResult = f"Gause '{name}' not defined"
+         return bSuccess, sResult
+      if value is not None:
+         try:
+            value = int(value)
+         except Exception as ex:
+            bSuccess = False
+            sResult  = str(ex)
+            return bSuccess, sResult
+      oGauge = self.__dictGauges[name]
+      if labels is None:
+         if value is None:
+            oGauge.inc()
+         else:
+            oGauge.inc(value)
+      else:
+         labellist = labels.split(';')
+         listLabels = []
+         for label in labellist:
+            label = label.strip()
+            listLabels.append(label)
+         # the following is not nice, but 'oGauge.labels(listLabels).inc(value)' does not work / error: 'incorrect label count' / investigation to be done
+         listLabels_2 = []
+         for label in listLabels:
+            listLabels_2.append(f"\"{label}\"")
+         sLabels = ", ".join(listLabels_2)
+         if value is None:
+            sCode = f"oGauge.labels({sLabels}).inc()"
+         else:
+            sCode = f"oGauge.labels({sLabels}).inc(value)"
+         try:
+            exec(sCode)
+         except Exception as ex:
+            bSuccess = False
+            sResult  = str(ex)
+            return bSuccess, sResult
+      bSuccess = True
+      listResults = []
+      listResults.append(f"gauge '{name}' incremented")
+      if value is not None:
+         listResults.append(f"by value '{value}'")
+      if labels is not None:
+         listResults.append(f"with labels: '{labels}'")
+      sResult = " ".join(listResults)
+      return bSuccess, sResult
+   # eof def inc_gauge(...):
+
+   @keyword
+   def dec_gauge(self, name=None, value=None, labels=None):
+      """dec_gauge
+      """
+      bSuccess = False
+      sResult  = "UNKNOWN"
+      if name is None:
+         sResult = "parameter 'name' not defined"
+         return bSuccess, sResult
+      if name not in self.__dictGauges:
+         sResult = f"Gause '{name}' not defined"
+         return bSuccess, sResult
+      if value is not None:
+         try:
+            value = int(value)
+         except Exception as ex:
+            bSuccess = False
+            sResult  = str(ex)
+            return bSuccess, sResult
+      oGauge = self.__dictGauges[name]
+      if labels is None:
+         if value is None:
+            oGauge.dec()
+         else:
+            oGauge.dec(value)
+      else:
+         labellist = labels.split(';')
+         listLabels = []
+         for label in labellist:
+            label = label.strip()
+            listLabels.append(label)
+         # the following is not nice, but 'oGauge.labels(listLabels).inc(value)' does not work / error: 'incorrect label count' / investigation to be done
+         listLabels_2 = []
+         for label in listLabels:
+            listLabels_2.append(f"\"{label}\"")
+         sLabels = ", ".join(listLabels_2)
+         if value is None:
+            sCode = f"oGauge.labels({sLabels}).dec()"
+         else:
+            sCode = f"oGauge.labels({sLabels}).dec(value)"
+         try:
+            exec(sCode)
+         except Exception as ex:
+            bSuccess = False
+            sResult  = str(ex)
+            return bSuccess, sResult
+      bSuccess = True
+      listResults = []
+      listResults.append(f"gauge '{name}' decremented")
+      if value is not None:
+         listResults.append(f"by value '{value}'")
+      if labels is not None:
+         listResults.append(f"with labels: '{labels}'")
+      sResult = " ".join(listResults)
+      return bSuccess, sResult
+   # eof def dec_gauge(...):
+
 
 # eof class prometheus_interface():
 

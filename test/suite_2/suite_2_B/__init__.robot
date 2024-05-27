@@ -32,6 +32,13 @@ Prometheus Suite Setup
     # setup of TestsuitesManagement
     tm.testsuite_setup    ./config/variants_config.json
 
+    # prometheus interface information
+    ${me}   rf.prometheus_interface.who_am_i
+    rf.extensions.pretty_print    =========== I am: ${me}
+
+    ${location}   rf.prometheus_interface.where_am_i
+    rf.extensions.pretty_print    =========== Located in: ${location}
+
     # setup of Prometheus counter and gauges
     ${success}    ${result}    rf.prometheus_interface.add_counter    name=num_passed     description=: number of passed tests     labels=room;testbench;testname;testresult
     rf.extensions.pretty_print    [add_counter] (${success}) : ${result}
