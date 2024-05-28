@@ -16,7 +16,7 @@
 #
 # **************************************************************************************************************
 #
-# ========== Release Items for component 'prometheus_interface' ==========
+# ========== Release Items for component 'PrometheusInterface' ==========
 #
 # Basically this component is stand-alone, but can also be used as part of an automation framework called
 # RobotFramework AIO. More information about this framework you can find here:
@@ -38,16 +38,15 @@
 # Section "COMPONENT":
 # --------------------
 
-   "COMPONENT" : "prometheus_interface",
+   "COMPONENT" : "PrometheusInterface",
 
 
 # Section "RELEASES" for RobotFramework AIO:
 # ------------------------------------------
 
    "RELEASES"  : {
-                   "0.x.y" : [
-                               "0.x.y",
-                               "0.x.y"
-                             ]
+                   "0.12.1" : [
+                               "Initial introduction of keyword library ``PrometheusInterface`` to enable monitoring of **Robot Framework** test data."
+                              ]
                  }
 }
