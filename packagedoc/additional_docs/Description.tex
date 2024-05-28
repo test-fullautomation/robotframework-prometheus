@@ -16,6 +16,66 @@
 %
 % --------------------------------------------------------------------------------------------------------------
 
-\section{Keywords}
+\section{Test setup}
 
-T.B.C.
+How many tests are passed? How many tests are failed? On which test benches do these tests run? Did any resets occur during test execution?
+How about the temporary unavailability of required test external components?
+
+To monitor all these informations, a test system setup is necessary consisting of at least the following components:
+
+\begin{enumerate}
+   \item A test framework that executes the test and provides the data to be monitored (here: the \textbf{Robot Framework}).
+         This includes the possibility that more than one test framework runs in parallel.
+
+   \item A component that collects and stores data from all executed test frameworks (here: the monitoring system \textbf{Prometheus}).
+
+   \item A component that visualizes all data that have been collected (here: \textbf{Grafana}).
+\end{enumerate}
+
+This is not the only way to establish such a test system, but in this document we concentrate on \textbf{Robot Framework}, \textbf{Prometheus} and \textbf{Grafana}.
+
+
+To be able to collect values, \textbf{Prometheus} requires an http based counterpart. And the \textbf{Robot Framework} must be enabled to support this counterpart.
+In pure Python this is realized by a \textbf{Prometheus Python client library}. On \textbf{Robot Framework} level this is done by this component \pkg\ that is a mapping
+between the interface of the \textbf{Prometheus Python client library} and \textbf{Robot Framework} keywords.
+
+Or in other words: \pkg\ uses the \textbf{Prometheus Python client library} to provide values to \textbf{Prometheus} to enable the data visualization in \textbf{Grafana}.
+
+The \textbf{Prometheus Python client library} is part of the installation dependencies of \pkg. \textbf{Prometheus} and \textbf{Grafana} are components that
+have to be downloaded, installed and configured separately.
+
+% --------------------------------------------------------------------------------------------------------------
+
+\section{Installations}
+
+\textbf{1. Prometheus}
+
+To install \textbf{Prometheus} please visit the \href{https://prometheus.io/}{homepage}. This homepage also contains a \textit{getting started} section containing useful hints about how to configure.the application.
+
+Further informations can also be found \href{https://www.fullstackpython.com/prometheus.html}{here}.
+
+\textbf{2. Grafana}
+
+The advantage of using \textbf{Grafana} for data visualization is to have a \textit{ready to use} interface to \textbf{Prometheus} available. Other possible solutions are not in focus here.
+
+To install \textbf{Grafana} please visit the \href{https://grafana.com/}{homepage}.
+
+\textbf{3. Prometheus Python client library}
+
+This library belongs to the installation dependencies of \pkg. A separate installation is not required. In case you want to learn more about this client library please visit the following web pages:
+\href{https://pypi.org/project/prometheus-client/}{[1]}, \href{https://prometheus.github.io/client_python/}{[2]}, \href{https://prometheus.io/docs/prometheus/latest/getting_started/}{[3]}.
+
+% --------------------------------------------------------------------------------------------------------------
+
+\newpage
+
+\section{Configuration}
+
+t.b.c.
+
+
+
+
+
+
+

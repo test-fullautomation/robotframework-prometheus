@@ -28,7 +28,7 @@ Package Documentation
 
 A (growing) detailed documentation of the **prometheus_interface** can be found here:
 
-`prometheus_interface.pdf <https://github.com/test-fullautomation/robotframework-prometheus/blob/develop/PrometheusInterface/PrometheusInterface.pdf>`_
+`PrometheusInterface.pdf <https://github.com/test-fullautomation/robotframework-prometheus/blob/develop/PrometheusInterface/PrometheusInterface.pdf>`_
 
 Feedback
 --------

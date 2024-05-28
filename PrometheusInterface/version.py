@@ -16,8 +16,8 @@
 #
 # **************************************************************************************************************
 #
-# Version and date of robotframework_prometheus
+# Version and date of PrometheusInterface
 #
-VERSION      = "0.3.0"
-VERSION_DATE = "27.05.2024"
+VERSION      = "0.4.0"
+VERSION_DATE = "28.05.2024"
 
