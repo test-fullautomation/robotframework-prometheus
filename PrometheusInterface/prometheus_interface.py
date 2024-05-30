@@ -29,15 +29,19 @@ from robot.libraries.BuiltIn import BuiltIn
 from PythonExtensionsCollection.String.CString import CString
 from PythonExtensionsCollection.Utils.CUtils import *
 
-# -- import library version
-from PrometheusInterface.version import VERSION as LIBRARY_VERSION
-from PrometheusInterface.version import VERSION_DATE as LIBRARY_VERSION_DATE
-
 # --------------------------------------------------------------------------------------------------------------
-
+# this interface library
+#
+LIBRARY_VERSION      = "0.5.0"
+LIBRARY_VERSION_DATE = "30.05.2024"
+#
 THISMODULENAME = "prometheus_interface.py"
 THISMODULE     = f"{THISMODULENAME} v. {LIBRARY_VERSION} / {LIBRARY_VERSION_DATE}"
-
+#
+DEFAULT_PORT = 8000
+#
+DEFAULT_MESSAGE_LEVEL = "INFO"
+#
 # --------------------------------------------------------------------------------------------------------------
 # 
 @library
@@ -50,16 +54,16 @@ For this purpose the 'Prometheus Python client library' is used.
    ROBOT_LIBRARY_VERSION = LIBRARY_VERSION
    ROBOT_LIBRARY_SCOPE   = 'GLOBAL'
 
-   DEFAULT_PORT = 8000
-
    # --------------------------------------------------------------------------------------------------------------
    #TM***
 
-   def __init__(self, port_number=DEFAULT_PORT, message_level="INFO"):
+   def __init__(self, port_number=DEFAULT_PORT, message_level=DEFAULT_MESSAGE_LEVEL):
       self.__sMessageLevel = message_level
       self.__dictCounter = {}
       self.__dictGauges  = {}
-      start_http_server(port_number)
+      self.__port_number = port_number
+
+      start_http_server(self.__port_number)
 
       self.__oLighting = None # experimental only
 
@@ -90,6 +94,12 @@ For this purpose the 'Prometheus Python client library' is used.
       """
       location = CString.NormalizePath(os.path.abspath(__file__))
       return location
+
+   @keyword
+   def get_port_number(self):
+      """Returns the port number assigned to this instance of the library
+      """
+      return self.__port_number
 
 
    # --------------------------------------------------------------------------------------------------------------

@@ -34,10 +34,13 @@ Prometheus Suite Setup
 
     # prometheus interface information
     ${me}   rf.prometheus_interface.who_am_i
-    rf.extensions.pretty_print    =========== I am: ${me}
+    rf.extensions.pretty_print    [INTERFACE INFO] I am: ${me}
 
     ${location}   rf.prometheus_interface.where_am_i
-    rf.extensions.pretty_print    =========== Located in: ${location}
+    rf.extensions.pretty_print    [INTERFACE INFO] Located in: ${location}
+
+    ${port_number}   rf.prometheus_interface.get_port_number
+    rf.extensions.pretty_print    [INTERFACE INFO] Working with port: ${port_number}
 
     # setup of Prometheus counter and gauges
     ${success}    ${result}    rf.prometheus_interface.add_counter    name=num_passed     description=: number of passed tests     labels=room;testbench;testname;testresult
