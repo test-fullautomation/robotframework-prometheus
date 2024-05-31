@@ -45,8 +45,8 @@
 # ------------------------------------------
 
    "RELEASES"  : {
-                   "0.12.1" : [
-                               "Initial introduction of keyword library ``PrometheusInterface`` to enable monitoring of **Robot Framework** test data."
-                              ]
+                   "0.12.1.;0.13.0." : [
+                       "Initial introduction of keyword library ``PrometheusInterface`` to enable monitoring of **Robot Framework** test data."
+                     ]
                  }
 }
