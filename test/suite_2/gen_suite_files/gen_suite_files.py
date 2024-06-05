@@ -22,8 +22,8 @@
 #
 # **************************************************************************************************************
 #
-VERSION      = "0.4.0"
-VERSION_DATE = "27.05.2024"
+VERSION      = "0.5.0"
+VERSION_DATE = "05.06.2024"
 #
 # **************************************************************************************************************
 
@@ -196,7 +196,10 @@ Prometheus Set Values Execution ##EXECUTION_NAME##
    ${success}    ${result}    rf.prometheus_interface.dec_gauge    name=beats_per_minute    value=2    labels=Room_1;##TESTBENCH##
    rf.extensions.pretty_print    [dec_gauge] (${success}) : ${result}
 
-   ##LIGHTING##
+   ${success}    ${result}    rf.prometheus_interface.set_info    name=overview    info=##INFO-NAME-1##:##INFO-VALUE-1##;##INFO-NAME-2##:##INFO-VALUE-2##;##INFO-NAME-3##:##INFO-VALUE-3##    labels=Room_1;##TESTBENCH##
+   rf.extensions.pretty_print    [set_info] (${success}) : ${result}
+
+   # ##LIGHTING##
 
    sleep    ##SLEEP##
 """
@@ -247,6 +250,12 @@ for nFileNumber in range(1, nNrOfFiles+1):
    sFileContent = sFileContent.replace('##TESTBENCH##', sTestbench)
    sFileContent = sFileContent.replace('##BEATS_PER_MINUTE##', sBeatsPerMinute_A)
    sFileContent = sFileContent.replace('##SLEEP##', sSleep)
+   sFileContent = sFileContent.replace('##INFO-NAME-1##', "test_name")
+   sFileContent = sFileContent.replace('##INFO-VALUE-1##', sTestName)
+   sFileContent = sFileContent.replace('##INFO-NAME-2##', "test_result")
+   sFileContent = sFileContent.replace('##INFO-VALUE-2##', sTestResult)
+   sFileContent = sFileContent.replace('##INFO-NAME-3##', "file_number")
+   sFileContent = sFileContent.replace('##INFO-VALUE-3##', f"F-{nFileNumber}")
 
    if nFileNumber % 3 == 0:
       sLighting_A = oLighting_A.GetValue()
@@ -293,6 +302,12 @@ for nFileNumber in range(1, nNrOfFiles+1):
    sFileContent = sFileContent.replace('##TESTBENCH##', sTestbench)
    sFileContent = sFileContent.replace('##BEATS_PER_MINUTE##', sBeatsPerMinute_B)
    sFileContent = sFileContent.replace('##SLEEP##', sSleep)
+   sFileContent = sFileContent.replace('##INFO-NAME-1##', "test_name")
+   sFileContent = sFileContent.replace('##INFO-VALUE-1##', sTestName)
+   sFileContent = sFileContent.replace('##INFO-NAME-2##', "test_result")
+   sFileContent = sFileContent.replace('##INFO-VALUE-2##', sTestResult)
+   sFileContent = sFileContent.replace('##INFO-NAME-3##', "file_number")
+   sFileContent = sFileContent.replace('##INFO-VALUE-3##', f"F-{nFileNumber}")
 
    if nFileNumber % 4 == 0:
       sLighting_B = oLighting_B.GetValue()

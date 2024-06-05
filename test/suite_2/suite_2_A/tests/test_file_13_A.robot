@@ -1,4 +1,4 @@
-# generated at 27.05.2024 - 15:09:39
+# generated at 05.06.2024 - 17:13:37
 
 *** Settings ***
 Resource    ../resources.resource
@@ -25,7 +25,10 @@ Prometheus Set Values Execution I-13-A
    ${success}    ${result}    rf.prometheus_interface.dec_gauge    name=beats_per_minute    value=2    labels=Room_1;Testbench 1
    rf.extensions.pretty_print    [dec_gauge] (${success}) : ${result}
 
-   rf.prometheus_interface.set_daylight
+   ${success}    ${result}    rf.prometheus_interface.set_info    name=overview    info=test_name:Suite-A-Test-03;test_result:PASSED;file_number:F-13    labels=Room_1;Testbench 1
+   rf.extensions.pretty_print    [set_info] (${success}) : ${result}
+
+   # rf.prometheus_interface.set_daylight
 
    sleep    2s
 

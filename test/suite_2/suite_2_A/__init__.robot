@@ -53,10 +53,12 @@ Prometheus Suite Setup
     ${success}    ${result}    rf.prometheus_interface.add_gauge    name=beats_per_minute    description=: current beats per minute     labels=room;testbench
     rf.extensions.pretty_print    [add_gauge] (${success}) : ${result}
 
-    rf.prometheus_interface.add_info
+    ${success}    ${result}    rf.prometheus_interface.add_info    name=overview    description=: The overview about the test sytem     labels=room;testbench
+    rf.extensions.pretty_print    [add_info] (${success}) : ${result}
 
-    rf.prometheus_interface.add_lighting
-    rf.prometheus_interface.set_daylight
+    # to be restored:
+    # rf.prometheus_interface.add_lighting
+    # rf.prometheus_interface.set_daylight
 
 
 Prometheus Suite Teardown

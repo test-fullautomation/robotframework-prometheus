@@ -32,8 +32,8 @@ from PythonExtensionsCollection.Utils.CUtils import *
 # --------------------------------------------------------------------------------------------------------------
 # this interface library
 #
-LIBRARY_VERSION      = "0.5.0"
-LIBRARY_VERSION_DATE = "30.05.2024"
+LIBRARY_VERSION      = "0.6.0"
+LIBRARY_VERSION_DATE = "05.06.2024"
 #
 THISMODULENAME = "prometheus_interface.py"
 THISMODULE     = f"{THISMODULENAME} v. {LIBRARY_VERSION} / {LIBRARY_VERSION_DATE}"
@@ -59,17 +59,29 @@ For this purpose the 'Prometheus Python client library' is used.
 
    def __init__(self, port_number=DEFAULT_PORT, message_level=DEFAULT_MESSAGE_LEVEL):
       self.__sMessageLevel = message_level
+      self.__port_number   = port_number
+
+      # prometheus metric types
       self.__dictCounter = {}
       self.__dictGauges  = {}
-      self.__port_number = port_number
+      self.__dictInfos   = {}
 
       start_http_server(self.__port_number)
 
-      self.__oLighting = None # experimental only
+      # default info metric about this interface library
+      oInfo = Info("Prometheus_interface", "Prometheus interface info")
+      dictInfo = {}
+      dictInfo['file name'] = THISMODULENAME
+      dictInfo['version']   = LIBRARY_VERSION
+      dictInfo['date']      = LIBRARY_VERSION_DATE
+      dictInfo['location']  = self.where_am_i()
+      oInfo.info(dictInfo)
+
 
    def __del__(self):
       del self.__dictCounter
       del self.__dictGauges
+      del self.__dictInfos
 
    # --------------------------------------------------------------------------------------------------------------
    # -- library informations
@@ -90,9 +102,9 @@ For this purpose the 'Prometheus Python client library' is used.
 
    @keyword
    def where_am_i(self):
-      """Returns path and file name of this interface library
+      """Returns path to this interface library
       """
-      location = CString.NormalizePath(os.path.abspath(__file__))
+      location = CString.NormalizePath(os.path.dirname(os.path.abspath(__file__)))
       return location
 
    @keyword
@@ -103,40 +115,121 @@ For this purpose the 'Prometheus Python client library' is used.
 
 
    # --------------------------------------------------------------------------------------------------------------
-   # -- infos
+   # -- prometheus metric type 'Info'
    # --------------------------------------------------------------------------------------------------------------
    #TM***
 
-   # >>> "infos" keywords experimental, hard coded and under construction
+   @keyword
+   def add_info(self, name=None, description=None, labels=None):
+      """add_info
+      """
+      success = False
+      result  = "UNKNOWN"
+      if name is None:
+         result = "Parameter 'name' not defined"
+         return success, result
+      if description is None:
+         result = "Parameter 'description' not defined"
+         return success, result
+      if name in self.__dictInfos:
+         result = f"An info with name '{name}' is already defined"
+         return success, result
+      oInfo = None
+      if labels is None:
+         oInfo = Info(name, description)
+      else:
+         labellist = labels.split(';')
+         listLabelNames = []
+         for label in labellist:
+            label = label.strip()
+            listLabelNames.append(label)
+         oInfo = Info(name, description, listLabelNames)
+      self.__dictInfos[name] = oInfo
+      success = True
+      listResults = []
+      listResults.append(f"Info '{name}' added")
+      if labels is not None:
+         listResults.append(f"with labels: '{labels}'")
+      result = " ".join(listResults)
+      return success, result
 
    @keyword
-   def add_info(self):
-      """add_info (experimental only)
+   def set_info(self, name=None, info=None, labels=None):
+      """set_info
       """
-      oInfo = Info('prometheus_interface', ': name and version of prometheus interface')
-      oInfo.info({'interface': f"{THISMODULE}", 'version': f"{LIBRARY_VERSION}"})
+      success = False
+      result  = "UNKNOWN"
+      if name is None:
+         result = "Parameter 'name' not defined"
+         return success, result
+      if info is None:
+         result = "Parameter 'info' not defined"
+         return success, result
+      if name not in self.__dictInfos:
+         result = f"Info '{name}' not defined"
+         return success, result
+      dictInfo = {}
+      list_splitparts = info.split(';')
+      for splitpart in list_splitparts:
+         splitpart = splitpart.strip()
+         list_splitparts2 = splitpart.split(':')
+         if len(list_splitparts2) != 2:
+            success = False
+            result  = "Syntax error in parameter 'info' of '{name}': missing delimiter"
+            return success, result
+         param_name = list_splitparts2[0].strip()
+         if param_name == "":
+            success = False
+            result  = "Syntax error in parameter 'info' of '{name}': parameter name is empty"
+            return success, result
+         param_value = list_splitparts2[1].strip()
+         if param_value == "":
+            success = False
+            result  = "Syntax error in parameter 'info' of '{name}': parameter value is empty"
+            return success, result
+         dictInfo[param_name] = str(param_value)
+      oInfo = self.__dictInfos[name]
+      if labels is None:
+         oInfo.info(dictInfo)
+      else:
+         labellist = labels.split(';')
+         listLabelValues = []
+         for label in labellist:
+            label = label.strip()
+            listLabelValues.append(label)
+         oInfo.labels(*listLabelValues).info(dictInfo)
+      success = True
+      listResults = []
+      listResults.append(f"Info '{name}' set to'{info}'")
+      if labels is not None:
+         listResults.append(f"with labels: '{labels}'")
+      result = " ".join(listResults)
+      return success, result
 
-   @keyword
-   def add_lighting(self):
-      """add_lighting (experimental only)
-      """
-      self.__oLighting = Info('lighting', ': kind of lighting')
 
-   @keyword
-   def set_daylight(self):
-      """set_daylight (experimental only)
-      """
-      self.__oLighting.info({'lighting' : 'daylight'})
+# TODO lighting reaktivieren (as example)
 
-   @keyword
-   def set_nightlight(self):
-      """set_nightlight (experimental only)
-      """
-      self.__oLighting.info({'lighting' : 'nightlight'})
+   # # @keyword
+   # # def add_lighting(self):
+      # # """add_lighting (experimental only)
+      # # """
+      # # self.__oLighting = Info('lighting', ': kind of lighting')
+
+   # # @keyword
+   # # def set_daylight(self):
+      # # """set_daylight (experimental only)
+      # # """
+      # # self.__oLighting.info({'lighting' : 'daylight'})
+
+   # # @keyword
+   # # def set_nightlight(self):
+      # # """set_nightlight (experimental only)
+      # # """
+      # # self.__oLighting.info({'lighting' : 'nightlight'})
 
 
    # --------------------------------------------------------------------------------------------------------------
-   # -- counter
+   # -- prometheus metric type 'Counter'
    # --------------------------------------------------------------------------------------------------------------
    #TM***
 
@@ -181,27 +274,31 @@ For this purpose the 'Prometheus Python client library' is used.
       success = False
       result  = "UNKNOWN"
       if name is None:
-         result = "parameter 'name' not defined"
+         result = "Parameter 'name' not defined"
          return success, result
       if description is None:
-         result = "parameter 'description' not defined"
+         result = "Parameter 'description' not defined"
          return success, result
       if name in self.__dictCounter:
-         result = f"a counter with name '{name}' is already defined"
+         result = f"A counter with name '{name}' is already defined"
          return success, result
       oCounter = None
       if labels is None:
          oCounter = Counter(name, description)
       else:
          labellist = labels.split(';')
-         listLabels = []
+         listLabelNames = []
          for label in labellist:
             label = label.strip()
-            listLabels.append(label)
-         oCounter = Counter(name, description, listLabels)
+            listLabelNames.append(label)
+         oCounter = Counter(name, description, listLabelNames)
       self.__dictCounter[name] = oCounter
       success = True
-      result  = f"counter '{name}' added"
+      listResults = []
+      listResults.append(f"Counter '{name}' added")
+      if labels is not None:
+         listResults.append(f"with labels: '{labels}'")
+      result = " ".join(listResults)
       return success, result
    # eof def add_counter(...):
 
@@ -246,10 +343,10 @@ For this purpose the 'Prometheus Python client library' is used.
       success = False
       result  = "UNKNOWN"
       if name is None:
-         result = "parameter 'name' not defined"
+         result = "Parameter 'name' not defined"
          return success, result
       if name not in self.__dictCounter:
-         result = f"counter '{name}' not defined"
+         result = f"Counter '{name}' not defined"
          return success, result
       if value is not None:
          try:
@@ -266,28 +363,17 @@ For this purpose the 'Prometheus Python client library' is used.
             oCounter.inc(value)
       else:
          labellist = labels.split(';')
-         listLabels = []
+         listLabelValues = []
          for label in labellist:
             label = label.strip()
-            listLabels.append(label)
-         # the following is not nice, but 'oCounter.labels(listLabels).inc(value)' does not work / error: 'incorrect label count' / investigation to be done
-         listLabels_2 = []
-         for label in listLabels:
-            listLabels_2.append(f"\"{label}\"")
-         sLabels = ", ".join(listLabels_2)
+            listLabelValues.append(label)
          if value is None:
-            sCode = f"oCounter.labels({sLabels}).inc()"
+            oCounter.labels(*listLabelValues).inc()
          else:
-            sCode = f"oCounter.labels({sLabels}).inc(value)"
-         try:
-            exec(sCode)
-         except Exception as ex:
-            success = False
-            result  = str(ex)
-            return success, result
+            oCounter.labels(*listLabelValues).inc(value)
       success = True
       listResults = []
-      listResults.append(f"counter '{name}' incremented")
+      listResults.append(f"Counter '{name}' incremented")
       if value is not None:
          listResults.append(f"by value '{value}'")
       if labels is not None:
@@ -298,7 +384,7 @@ For this purpose the 'Prometheus Python client library' is used.
 
 
    # --------------------------------------------------------------------------------------------------------------
-   # -- gauges
+   # -- prometheus metric type 'Gauge'
    # --------------------------------------------------------------------------------------------------------------
    #TM***
 
@@ -343,27 +429,31 @@ For this purpose the 'Prometheus Python client library' is used.
       success = False
       result  = "UNKNOWN"
       if name is None:
-         result = "parameter 'name' not defined"
+         result = "Parameter 'name' not defined"
          return success, result
       if description is None:
-         result = "parameter 'description' not defined"
+         result = "Parameter 'description' not defined"
          return success, result
       if name in self.__dictGauges:
-         result = f"a gauge with name '{name}' is already defined"
+         result = f"A gauge with name '{name}' is already defined"
          return success, result
       oGauge = None
       if labels is None:
          oGauge = Gauge(name, description)
       else:
          labellist = labels.split(';')
-         listLabels = []
+         listLabelNames = []
          for label in labellist:
             label = label.strip()
-            listLabels.append(label)
-         oGauge = Gauge(name, description, listLabels)
+            listLabelNames.append(label)
+         oGauge = Gauge(name, description, listLabelNames)
       self.__dictGauges[name] = oGauge
       success = True
-      result  = f"gauge '{name}' added"
+      listResults = []
+      listResults.append(f"Gauge '{name}' added")
+      if labels is not None:
+         listResults.append(f"with labels: '{labels}'")
+      result = " ".join(listResults)
       return success, result
    # eof def add_gauge(...):
 
@@ -408,13 +498,13 @@ For this purpose the 'Prometheus Python client library' is used.
       success = False
       result  = "UNKNOWN"
       if name is None:
-         result = "parameter 'name' not defined"
+         result = "Parameter 'name' not defined"
          return success, result
       if name not in self.__dictGauges:
-         result = f"gauge '{name}' not defined"
+         result = f"Gauge '{name}' not defined"
          return success, result
       if value is None:
-         result = "parameter 'value' not defined"
+         result = "Parameter 'value' not defined"
          return success, result
       else:
          try:
@@ -428,25 +518,14 @@ For this purpose the 'Prometheus Python client library' is used.
          oGauge.set(value)
       else:
          labellist = labels.split(';')
-         listLabels = []
+         listLabelValues = []
          for label in labellist:
             label = label.strip()
-            listLabels.append(label)
-         # the following is not nice, but 'oGauge.labels(listLabels).set(value)' does not work / error: 'incorrect label count' / investigation to be done
-         listLabels_2 = []
-         for label in listLabels:
-            listLabels_2.append(f"\"{label}\"")
-         sLabels = ", ".join(listLabels_2)
-         sCode = f"oGauge.labels({sLabels}).set(value)"
-         try:
-            exec(sCode)
-         except Exception as ex:
-            success = False
-            result  = str(ex)
-            return success, result
+            listLabelValues.append(label)
+         oGauge.labels(*listLabelValues).set(value)
       success = True
       listResults = []
-      listResults.append(f"gauge '{name}' set to value '{value}'")
+      listResults.append(f"Gauge '{name}' set to value '{value}'")
       if labels is not None:
          listResults.append(f"with labels: '{labels}'")
       result = " ".join(listResults)
@@ -494,10 +573,10 @@ For this purpose the 'Prometheus Python client library' is used.
       success = False
       result  = "UNKNOWN"
       if name is None:
-         result = "parameter 'name' not defined"
+         result = "Parameter 'name' not defined"
          return success, result
       if name not in self.__dictGauges:
-         result = f"Gause '{name}' not defined"
+         result = f"Gauge '{name}' not defined"
          return success, result
       if value is not None:
          try:
@@ -514,28 +593,17 @@ For this purpose the 'Prometheus Python client library' is used.
             oGauge.inc(value)
       else:
          labellist = labels.split(';')
-         listLabels = []
+         listLabelValues = []
          for label in labellist:
             label = label.strip()
-            listLabels.append(label)
-         # the following is not nice, but 'oGauge.labels(listLabels).inc(value)' does not work / error: 'incorrect label count' / investigation to be done
-         listLabels_2 = []
-         for label in listLabels:
-            listLabels_2.append(f"\"{label}\"")
-         sLabels = ", ".join(listLabels_2)
+            listLabelValues.append(label)
          if value is None:
-            sCode = f"oGauge.labels({sLabels}).inc()"
+            oGauge.labels(*listLabelValues).inc()
          else:
-            sCode = f"oGauge.labels({sLabels}).inc(value)"
-         try:
-            exec(sCode)
-         except Exception as ex:
-            success = False
-            result  = str(ex)
-            return success, result
+            oGauge.labels(*listLabelValues).inc(value)
       success = True
       listResults = []
-      listResults.append(f"gauge '{name}' incremented")
+      listResults.append(f"Gauge '{name}' incremented")
       if value is not None:
          listResults.append(f"by value '{value}'")
       if labels is not None:
@@ -585,10 +653,10 @@ For this purpose the 'Prometheus Python client library' is used.
       success = False
       result  = "UNKNOWN"
       if name is None:
-         result = "parameter 'name' not defined"
+         result = "Parameter 'name' not defined"
          return success, result
       if name not in self.__dictGauges:
-         result = f"Gause '{name}' not defined"
+         result = f"Gauge '{name}' not defined"
          return success, result
       if value is not None:
          try:
@@ -605,28 +673,17 @@ For this purpose the 'Prometheus Python client library' is used.
             oGauge.dec(value)
       else:
          labellist = labels.split(';')
-         listLabels = []
+         listLabelValues = []
          for label in labellist:
             label = label.strip()
-            listLabels.append(label)
-         # the following is not nice, but 'oGauge.labels(listLabels).inc(value)' does not work / error: 'incorrect label count' / investigation to be done
-         listLabels_2 = []
-         for label in listLabels:
-            listLabels_2.append(f"\"{label}\"")
-         sLabels = ", ".join(listLabels_2)
+            listLabelValues.append(label)
          if value is None:
-            sCode = f"oGauge.labels({sLabels}).dec()"
+            oGauge.labels(*listLabelValues).dec()
          else:
-            sCode = f"oGauge.labels({sLabels}).dec(value)"
-         try:
-            exec(sCode)
-         except Exception as ex:
-            success = False
-            result  = str(ex)
-            return success, result
+            oGauge.labels(*listLabelValues).dec(value)
       success = True
       listResults = []
-      listResults.append(f"gauge '{name}' decremented")
+      listResults.append(f"Gauge '{name}' decremented")
       if value is not None:
          listResults.append(f"by value '{value}'")
       if labels is not None:

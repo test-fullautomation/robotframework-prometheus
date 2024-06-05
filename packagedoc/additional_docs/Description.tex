@@ -50,7 +50,8 @@ have to be downloaded, installed and configured separately.
 
 \textbf{1. Prometheus}
 
-To install \textbf{Prometheus} please visit the \href{https://prometheus.io/}{homepage}. This homepage also contains a \textit{getting started} section containing useful hints about how to configure.the application.
+To install \textbf{Prometheus} please visit the \href{https://prometheus.io/}{homepage}. This homepage also contains a \textit{getting started} section containing useful hints
+about how to configure the application.
 
 Further informations can also be found \href{https://www.fullstackpython.com/prometheus.html}{here}.
 
@@ -59,6 +60,8 @@ Further informations can also be found \href{https://www.fullstackpython.com/pro
 The advantage of using \textbf{Grafana} for data visualization is to have a \textit{ready to use} interface to \textbf{Prometheus} available. Other possible solutions are not in focus here.
 
 To install \textbf{Grafana} please visit the \href{https://grafana.com/}{homepage}.
+
+How to create a Prometheus data source in Grafana, is described \href{https://prometheus.io/docs/visualization/grafana/}{here}.
 
 \textbf{3. Prometheus Python client library}
 
@@ -71,7 +74,143 @@ This library belongs to the installation dependencies of \pkg. A separate instal
 
 \section{Configuration}
 
-t.b.c.
+\textbf{Prometheus} can be configured with a configuration file in YAML format. This includes the used port numbers. The example files in the \repo\ repository use
+the port numbers 8000, 8001 and 8002. Therefore the configuration file of \textbf{Prometheus} requires the following entry:
+
+\begin{pythoncode}
+- targets: ["localhost:8000","localhost:8001","localhost:8002"]
+\end{pythoncode}
+
+% --------------------------------------------------------------------------------------------------------------
+
+\section{Library import}
+
+After installation (see \href{https://github.com/test-fullautomation/robotframework-prometheus/blob/develop/README.rst}{README}), the interface library
+can be found within the \plog{site-packages} that is the usual place for installed Python modules. It is recommended to introduce an environment variable to store the
+\plog{site-packages} path, e.g. \pcode{ROBOTPYTHONSITEPACKAGESPATH}.
+
+Now within robot files the interface library can be imported in the following way:
+
+\begin{robotcode}
+*** Settings ***
+Library    %{ROBOTPYTHONSITEPACKAGESPATH}/PrometheusInterface/prometheus_interface.py
+\end{robotcode}
+
+If nothing else is specified, the default port 8000 is used. It can be required to run several \textbf{Robot Framework} instances in parallel. In this case
+every instance needs it's own port number. Within the \textbf{Prometheus} YAML file we already have three port numbers defined (like described above).
+
+Let's assume now we want to execute testsuite \textit{A} parallel to testsuite \textit{B}. Then we can assign port number 8001 to testsuite \textit{A}:
+
+\begin{robotcode}
+*** Settings ***
+Library    %{ROBOTPYTHONSITEPACKAGESPATH}/PrometheusInterface/prometheus_interface.py    port_number=${8001}
+\end{robotcode}
+
+and we assign port number 8002 to testsuite \textit{B}:
+
+\begin{robotcode}
+*** Settings ***
+Library    %{ROBOTPYTHONSITEPACKAGESPATH}/PrometheusInterface/prometheus_interface.py    port_number=${8002}
+\end{robotcode}
+
+Every testsuite needs it's own robot or resoure file in which this import happens!
+
+To support a better readibility of the test code we recommend to import the interface library with a certain name:
+
+\begin{robotcode}
+*** Settings ***
+Library    %{ROBOTPYTHONSITEPACKAGESPATH}/PrometheusInterface/prometheus_interface.py    port_number=${8001}    WITH NAME    rf.prometheus_interface
+\end{robotcode}
+
+With \rcode{rf} is the abbreviation of \textbf{Robot Framework}.
+
+% --------------------------------------------------------------------------------------------------------------
+
+\newpage
+
+\section{Support of Prometheus metric types}
+
+\subsection{Counters and gauges}
+
+The difference between a counter and a gauge is: A counter can be incremented only, whereas a gauge can be incremented, decremented and set to a certain value explicitly.
+Both counters and gauges have to be added before.
+
+A counter is added in this way:
+
+\begin{robotcode}
+rf.prometheus_interface.add_counter    name=(name of counter)     description=(description of counter)     labels=(label names)
+\end{robotcode}
+
+\rcode{name} and \rcode{decription} are required, \rcode{labels} is optional.
+
+\vspace{2ex}
+
+\textbf{Example:}
+
+We want to count \textit{passed}, \textit{failed} and \textit{unknown} tests. A posssible definition of counter can look like this:
+
+\begin{robotcode}
+rf.prometheus_interface.add_counter    name=num_passed     description=number of passed tests     labels=room;testbench;testname
+rf.prometheus_interface.add_counter    name=num_failed     description=number of failed tests     labels=room;testbench;testname
+rf.prometheus_interface.add_counter    name=num_unknown    description=number of unknown tests    labels=room;testbench;testname
+\end{robotcode}
+
+In this example we assume that several different tests are executed in several rooms and on several testbenches. It is not necessary to add
+a separate counter for every test on every testbench in every room. Only one counter (counting \textit{passed} tests) is required,
+but with several labels. Every label will be a separate series of measurements of the corresponding counter. Every label is also a filter criteria
+in \textbf{Grafana} when configuring metrics.
+
+During the lifetime of a testsuite a counter can be added only once. Therefore we suggest to place the adding into an \rlog{__init__.robot} file.
+
+\vspace{2ex}
+
+A counter can be incremented (by default value 1) in this way:
+
+\begin{robotcode}
+rf.prometheus_interface.inc_counter    name=(name)     labels=(label values)
+\end{robotcode}
+
+\vspace{2ex}
+
+A counter can also be incremented by a user defined value:
+
+\begin{robotcode}
+rf.prometheus_interface.inc_counter    name=(name)     value=(user defined increment)     labels=(label values)
+\end{robotcode}
+
+In \rcode{add_counter}, \rcode{labels} is a semicolon separated list of label \textit{names}. In \rcode{inc_counter}, \rcode{labels} is
+a semicolon separated list of label \textit{values}. Label names and label values must fit together in \rcode{add_counter} and \rcode{inc_counter}.
+
+\vspace{2ex}
+
+\textbf{Example:}
+
+\begin{robotcode}
+rf.prometheus_interface.inc_counter    name=num_passed    labels=Room_1;Testbench 2;Suite-A-Test-01
+\end{robotcode}
+
+\vspace{2ex}
+
+The same with gauges. A gauge is added in this way:
+
+\begin{robotcode}
+rf.prometheus_interface.add_gauge    name=(name of gauge)     description=(description of gauge)     labels=(label names)
+\end{robotcode}
+
+\rcode{name} and \rcode{decription} are required, \rcode{labels} is optional.
+
+\vspace{2ex}
+
+A gauge can e.g. be set to a certain value
+
+\begin{robotcode}
+rf.prometheus_interface.set_gauge    name=(name of gauge)    value=(value of gauge)    labels=(label values)
+\end{robotcode}
+
+As with counters, \rcode{labels} is a semicolon separated list of names or values.
+
+
+
 
 
 
