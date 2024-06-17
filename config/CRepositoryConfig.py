@@ -40,8 +40,8 @@ import pypandoc
 from PythonExtensionsCollection.String.CString import CString
 
 # get informations from library to be installed
-from PrometheusInterface.version import VERSION
-from PrometheusInterface.version import VERSION_DATE
+from PrometheusInterface.prometheus_interface import LIBRARY_VERSION
+from PrometheusInterface.prometheus_interface import LIBRARY_VERSION_DATE
 
 col.init(autoreset=True)
 COLBR = col.Style.BRIGHT + col.Fore.RED
@@ -81,8 +81,8 @@ class CRepositoryConfig():
         self.__dictRepositoryConfig['REPOSITORYCONFIGURATIONFILE'] = sRepositoryConfigurationFile
 
         # add version and date of the package this repository configuration belongs to
-        self.__dictRepositoryConfig['PACKAGEVERSION'] = VERSION
-        self.__dictRepositoryConfig['PACKAGEDATE']    = VERSION_DATE
+        self.__dictRepositoryConfig['PACKAGEVERSION'] = LIBRARY_VERSION
+        self.__dictRepositoryConfig['PACKAGEDATE']    = LIBRARY_VERSION_DATE
 
         # make absolute path to package documentation
         self.__dictRepositoryConfig['PACKAGEDOC'] = CString.NormalizePath(sPath=self.__dictRepositoryConfig['PACKAGEDOC'], sReferencePathAbs=self.__sReferencePath)
