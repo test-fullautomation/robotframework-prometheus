@@ -28,12 +28,11 @@ from robot.libraries.BuiltIn import BuiltIn
 # -- import some helpers
 from PythonExtensionsCollection.String.CString import CString
 from PythonExtensionsCollection.Utils.CUtils import *
+from PrometheusInterface.version import VERSION as LIBRARY_VERSION
+from PrometheusInterface.version import VERSION_DATE as LIBRARY_VERSION_DATE
 
 # --------------------------------------------------------------------------------------------------------------
 # this interface library
-#
-LIBRARY_VERSION      = "0.6.0"
-LIBRARY_VERSION_DATE = "05.06.2024"
 #
 THISMODULENAME = "prometheus_interface.py"
 THISMODULE     = f"{THISMODULENAME} v. {LIBRARY_VERSION} / {LIBRARY_VERSION_DATE}"
