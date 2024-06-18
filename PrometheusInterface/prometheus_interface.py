@@ -32,8 +32,8 @@ from PythonExtensionsCollection.Utils.CUtils import *
 # --------------------------------------------------------------------------------------------------------------
 # this interface library
 #
-LIBRARY_VERSION      = "0.6.0"
-LIBRARY_VERSION_DATE = "05.06.2024"
+LIBRARY_VERSION      = "0.6.1"
+LIBRARY_VERSION_DATE = "17.06.2024"
 #
 THISMODULENAME = "prometheus_interface.py"
 THISMODULE     = f"{THISMODULENAME} v. {LIBRARY_VERSION} / {LIBRARY_VERSION_DATE}"
