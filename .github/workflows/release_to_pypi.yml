@@ -24,6 +24,7 @@ jobs:
 
         - name: Install dependencies
           run: |
+            sudo apt-get update
             sudo apt-get install -y pandoc
             sudo apt-get install -y texlive-latex-*
             echo "GENDOC_LATEXPATH=$(dirname $(which pdflatex))" >> $GITHUB_ENV
