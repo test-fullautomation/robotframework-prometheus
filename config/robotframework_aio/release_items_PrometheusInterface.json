@@ -68,7 +68,7 @@ The goal is to count the number of *passed* and *failed* tests at two test bench
 | ``Library    %{ROBOTPYTHONSITEPACKAGESPATH}/PrometheusInterface/prometheus_interface.py    WITH NAME    rf.prometheus_interface``
 
 **Step 2:** Create a counter for *passed* and a counter for *failed* tests (with \"testbench\" is the *name* of a label, and not the value of a label with this name;
-the name of the testbanch is also **not** part of the counter name!).
+the name of the testbench is also **not** part of the counter name!).
 
 | ``rf.prometheus_interface.add_counter    name=num_passed     description=: number of passed tests     labels=testbench``
 | ``rf.prometheus_interface.add_counter    name=num_failed     description=: number of failed tests     labels=testbench``
