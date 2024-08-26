@@ -46,7 +46,43 @@
 
    "RELEASES"  : {
                    "0.12.1.;0.13.0." : [
-                       "Initial introduction of keyword library ``PrometheusInterface`` to enable monitoring of **Robot Framework** test data."
-                     ]
+"
+Initial introduction of keyword library **PrometheusInterface**.
+
+The interface library **PrometheusInterface** provides **Robot Framework** keywords to communicate with the monitoring
+system **Prometheus**. With the help of this interface it is possible to use **Prometheus** to monitor data
+provided by **Robot Framework** tests.
+
+The monitoring system **Prometheus** has to be installed separately. Please visit the `homepage <https://prometheus.io/>`_ for that.
+This homepage also contains a *getting started* section containing useful hints about how to configure the application.
+Further informations can also be found `here <https://www.fullstackpython.com/prometheus.html>`_.
+
+The entire test setup is described in the `main documentation <https://github.com/test-fullautomation/robotframework-prometheus/blob/develop/PrometheusInterface/PrometheusInterface.pdf>`_ of this keyword library.
+
+**Example**
+
+The goal is to count the number of *passed* and *failed* tests at two test benches: *testbench_1* and *testbench_2*.
+
+**Step 1:** Import the interface library
+
+| ``Library    %{ROBOTPYTHONSITEPACKAGESPATH}/PrometheusInterface/prometheus_interface.py    WITH NAME    rf.prometheus_interface``
+
+**Step 2:** Create a counter for *passed* and a counter for *failed* tests (with \"testbench\" is the *name* of a label, and not the value of a label with this name;
+the name of the testbench is also **not** part of the counter name!).
+
+| ``rf.prometheus_interface.add_counter    name=num_passed     description=: number of passed tests     labels=testbench``
+| ``rf.prometheus_interface.add_counter    name=num_failed     description=: number of failed tests     labels=testbench``
+
+This is usually done in the suite setup.
+
+**Step 3:** Whenever a test is *passed* or *failed* on a certain testbench, increment the corresponding counter, passing the testbench name also (here the testbench name
+is the *value* of the label with name \"testbench\").
+
+| ``rf.prometheus_interface.inc_counter    name=num_passed    labels=testbench_1``
+| ``rf.prometheus_interface.inc_counter    name=num_failed    labels=testbench_2``
+
+And so on.
+"
+                                       ]
                  }
 }
