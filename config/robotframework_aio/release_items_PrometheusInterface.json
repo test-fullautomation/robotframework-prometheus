@@ -65,23 +65,38 @@ The goal is to count the number of *passed* and *failed* tests at two test bench
 
 **Step 1:** Import the interface library
 
-| ``Library    %{ROBOTPYTHONSITEPACKAGESPATH}/PrometheusInterface/prometheus_interface.py    WITH NAME    rf.prometheus_interface``
+| ``Library\u00a0\u00a0\u00a0\u00a0%{ROBOTPYTHONSITEPACKAGESPATH}/PrometheusInterface/prometheus_interface.py\u00a0\u00a0\u00a0\u00a0WITH\u00a0NAME\u00a0\u00a0\u00a0\u00a0rf.prometheus_interface``
 
 **Step 2:** Create a counter for *passed* and a counter for *failed* tests (with \"testbench\" is the *name* of a label, and not the value of a label with this name;
 the name of the testbench is also **not** part of the counter name!).
 
-| ``rf.prometheus_interface.add_counter    name=num_passed     description=: number of passed tests     labels=testbench``
-| ``rf.prometheus_interface.add_counter    name=num_failed     description=: number of failed tests     labels=testbench``
+| ``rf.prometheus_interface.add_counter\u00a0\u00a0\u00a0\u00a0name=num_passed\u00a0\u00a0\u00a0\u00a0\u00a0description=:\u00a0number\u00a0of\u00a0passed\u00a0tests\u00a0\u00a0\u00a0\u00a0\u00a0labels=testbench``
+| ``rf.prometheus_interface.add_counter\u00a0\u00a0\u00a0\u00a0name=num_failed\u00a0\u00a0\u00a0\u00a0\u00a0description=:\u00a0number\u00a0of\u00a0failed\u00a0tests\u00a0\u00a0\u00a0\u00a0\u00a0labels=testbench``
 
 This is usually done in the suite setup.
 
 **Step 3:** Whenever a test is *passed* or *failed* on a certain testbench, increment the corresponding counter, passing the testbench name also (here the testbench name
 is the *value* of the label with name \"testbench\").
 
-| ``rf.prometheus_interface.inc_counter    name=num_passed    labels=testbench_1``
-| ``rf.prometheus_interface.inc_counter    name=num_failed    labels=testbench_2``
+| ``rf.prometheus_interface.inc_counter\u00a0\u00a0\u00a0\u00a0name=num_passed\u00a0\u00a0\u00a0\u00a0labels=testbench_1``
+| ``rf.prometheus_interface.inc_counter\u00a0\u00a0\u00a0\u00a0name=num_failed\u00a0\u00a0\u00a0\u00a0labels=testbench_2``
 
 And so on.
+"
+                                       ],
+                   "0.13.2.;0.14.0." : [
+"
+Added keywords for Prometheus metric types: ``Summary`` and ``Histogram``:
+
+* ``add_summary``
+* ``observe_summary``
+* ``add_histogram``
+* ``observe_histogram``
+
+References:
+
+* `Summary <https://prometheus.github.io/client_python/instrumenting/summary/>`_
+* `Histogram <https://prometheus.github.io/client_python/instrumenting/histogram/>`_
 "
                                        ]
                  }

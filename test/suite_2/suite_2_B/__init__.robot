@@ -56,9 +56,14 @@ Prometheus Suite Setup
     ${success}    ${result}    rf.prometheus_interface.add_info    name=overview    description=: The overview about the test sytem     labels=room;testbench
     rf.extensions.pretty_print    [add_info] (${success}) : ${result}
 
-    # to be restored:
-    # rf.prometheus_interface.add_lighting
-    # rf.prometheus_interface.set_nightlight
+    ${success}    ${result}    rf.prometheus_interface.add_info    name=lighting    description=: The kind of lighting     labels=room;testbench
+    rf.extensions.pretty_print    [add_info] (${success}) : ${result}
+
+    ${success}    ${result}    rf.prometheus_interface.add_summary    name=summary_delay    description=: summary test delays     labels=room;testbench
+    rf.extensions.pretty_print    [add_summary] (${success}) : ${result}
+
+    ${success}    ${result}    rf.prometheus_interface.add_histogram    name=histogram_delay    description=: histogram test delays     labels=room;testbench
+    rf.extensions.pretty_print    [add_histogram] (${success}) : ${result}
 
 
 Prometheus Suite Teardown
