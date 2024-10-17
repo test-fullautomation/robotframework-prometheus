@@ -22,8 +22,8 @@
 #
 # **************************************************************************************************************
 #
-VERSION      = "0.5.0"
-VERSION_DATE = "05.06.2024"
+VERSION      = "0.6.0"
+VERSION_DATE = "17.10.2024"
 #
 # **************************************************************************************************************
 
@@ -160,12 +160,28 @@ listBeatsPerMinute_B = [55,25,15,105,125,145,165,185,205]
 oBeatsPerMinute_B    = CListValues(listBeatsPerMinute_B)
 
 # lighting for tests of suite A
-listLighting_A = ["rf.prometheus_interface.set_daylight", "rf.prometheus_interface.set_nightlight"]
+listLighting_A = ["daylight", "twilight", "nightlight", "party", "twilight"]
 oLighting_A    = CListValues(listLighting_A)
 
 # lighting for tests of suite B
-listLighting_B = ["rf.prometheus_interface.set_nightlight", "rf.prometheus_interface.set_daylight"]
+listLighting_B = ["nightlight", "party", "twilight", "daylight", "twilight"]
 oLighting_B    = CListValues(listLighting_B)
+
+# summary values for tests of suite A
+listSummary_A = [2,4,6]
+oSummary_A    = CListValues(listSummary_A)
+
+# summary values for tests of suite B
+listSummary_B = [1.1,3.3,5.5]
+oSummary_B    = CListValues(listSummary_B)
+
+# histogram values for tests of suite A
+listHistogram_A = [4,6,8]
+oHistogram_A    = CListValues(listHistogram_A)
+
+# summary values for tests of suite B
+listHistogram_B = [3.3,5.5,7.7]
+oHistogram_B    = CListValues(listHistogram_B)
 
 # --------------------------------------------------------------------------------------------------------------
 
@@ -197,9 +213,16 @@ Prometheus Set Values Execution ##EXECUTION_NAME##
    rf.extensions.pretty_print    [dec_gauge] (${success}) : ${result}
 
    ${success}    ${result}    rf.prometheus_interface.set_info    name=overview    info=##INFO-NAME-1##:##INFO-VALUE-1##;##INFO-NAME-2##:##INFO-VALUE-2##;##INFO-NAME-3##:##INFO-VALUE-3##    labels=Room_1;##TESTBENCH##
-   rf.extensions.pretty_print    [set_info] (${success}) : ${result}
+   rf.extensions.pretty_print    [set_info (overview)] (${success}) : ${result}
 
-   # ##LIGHTING##
+   ${success}    ${result}    rf.prometheus_interface.set_info    name=lighting    info=lighting:##LIGHTING##    labels=Room_1;##TESTBENCH##
+   rf.extensions.pretty_print    [set_info (lighting)] (${success}) : ${result}
+
+   ${success}    ${result}    rf.prometheus_interface.observe_summary    name=summary_delay    value=##SUMMARY_VALUE##    labels=Room_1;##TESTBENCH##
+   rf.extensions.pretty_print    [observe_summary] (${success}) : ${result}
+
+   ${success}    ${result}    rf.prometheus_interface.observe_histogram    name=histogram_delay    value=##HISTOGRAM_VALUE##    labels=Room_1;##TESTBENCH##
+   rf.extensions.pretty_print    [observe_histogram] (${success}) : ${result}
 
    sleep    ##SLEEP##
 """
@@ -231,6 +254,8 @@ print(f"{sResult}")
 print()
 
 sLighting_A = oLighting_A.GetValue()
+nSummaryValue_A = str(oSummary_A.GetValue())
+nHistogramValue_A = str(oHistogram_A.GetValue())
 
 for nFileNumber in range(1, nNrOfFiles+1):
    sFileNumber    = f"{nFileNumber}".rjust(nRJust, '0')
@@ -258,8 +283,12 @@ for nFileNumber in range(1, nNrOfFiles+1):
    sFileContent = sFileContent.replace('##INFO-VALUE-3##', f"F-{nFileNumber}")
 
    if nFileNumber % 3 == 0:
-      sLighting_A = oLighting_A.GetValue()
+      sLighting_A       = oLighting_A.GetValue()
+      nSummaryValue_A   = str(oSummary_A.GetValue())
+      nHistogramValue_A = str(oHistogram_A.GetValue())
    sFileContent = sFileContent.replace('##LIGHTING##', sLighting_A)
+   sFileContent = sFileContent.replace('##SUMMARY_VALUE##', nSummaryValue_A)
+   sFileContent = sFileContent.replace('##HISTOGRAM_VALUE##', nHistogramValue_A)
 
    sRobotFile = f"{sDestFolder_A}/test_file_{sFileNumber}_A.robot"
    print(f"* '{sRobotFile}'")
@@ -283,6 +312,8 @@ print(f"{sResult}")
 print()
 
 sLighting_B = oLighting_B.GetValue()
+nSummaryValue_B = str(oSummary_B.GetValue())
+nHistogramValue_B = str(oHistogram_B.GetValue())
 
 for nFileNumber in range(1, nNrOfFiles+1):
    sFileNumber    = f"{nFileNumber}".rjust(nRJust, '0')
@@ -310,8 +341,12 @@ for nFileNumber in range(1, nNrOfFiles+1):
    sFileContent = sFileContent.replace('##INFO-VALUE-3##', f"F-{nFileNumber}")
 
    if nFileNumber % 4 == 0:
-      sLighting_B = oLighting_B.GetValue()
+      sLighting_B       = oLighting_B.GetValue()
+      nSummaryValue_B   = str(oSummary_B.GetValue())
+      nHistogramValue_B = str(oHistogram_B.GetValue())
    sFileContent = sFileContent.replace('##LIGHTING##', sLighting_B)
+   sFileContent = sFileContent.replace('##SUMMARY_VALUE##', nSummaryValue_B)
+   sFileContent = sFileContent.replace('##HISTOGRAM_VALUE##', nHistogramValue_B)
 
    sRobotFile = f"{sDestFolder_B}/test_file_{sFileNumber}_B.robot"
    print(f"* '{sRobotFile}'")

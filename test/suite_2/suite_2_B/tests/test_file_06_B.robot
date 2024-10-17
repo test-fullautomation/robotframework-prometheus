@@ -1,4 +1,4 @@
-# generated at 05.06.2024 - 17:13:37
+# generated at 17.10.2024 - 16:43:46
 
 *** Settings ***
 Resource    ../resources.resource
@@ -26,9 +26,16 @@ Prometheus Set Values Execution I-06-B
    rf.extensions.pretty_print    [dec_gauge] (${success}) : ${result}
 
    ${success}    ${result}    rf.prometheus_interface.set_info    name=overview    info=test_name:Suite-B-Test-06;test_result:UNKNOWN;file_number:F-6    labels=Room_1;Testbench 2
-   rf.extensions.pretty_print    [set_info] (${success}) : ${result}
+   rf.extensions.pretty_print    [set_info (overview)] (${success}) : ${result}
 
-   # rf.prometheus_interface.set_daylight
+   ${success}    ${result}    rf.prometheus_interface.set_info    name=lighting    info=lighting:party    labels=Room_1;Testbench 2
+   rf.extensions.pretty_print    [set_info (lighting)] (${success}) : ${result}
+
+   ${success}    ${result}    rf.prometheus_interface.observe_summary    name=summary_delay    value=3.3    labels=Room_1;Testbench 2
+   rf.extensions.pretty_print    [observe_summary] (${success}) : ${result}
+
+   ${success}    ${result}    rf.prometheus_interface.observe_histogram    name=histogram_delay    value=5.5    labels=Room_1;Testbench 2
+   rf.extensions.pretty_print    [observe_histogram] (${success}) : ${result}
 
    sleep    2s
 

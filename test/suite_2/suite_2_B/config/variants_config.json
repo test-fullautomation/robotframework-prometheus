@@ -26,6 +26,6 @@
 {
   "default": {
     "name": "testconfig_prometheus.json",
-    "path": ".../config/"
+    "path": "./"
   }
 }

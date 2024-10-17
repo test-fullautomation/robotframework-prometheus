@@ -19,7 +19,7 @@ import pickle, os, time, random
 import dotdict
 
 # -- import Prometheus interface
-from prometheus_client import start_http_server, Gauge, Counter, Info
+from prometheus_client import start_http_server, Gauge, Counter, Info, Summary, Histogram
 
 # -- import Robotframework API
 from robot.api.deco import keyword, library # required when using @keyword, @library decorators
@@ -32,8 +32,8 @@ from PythonExtensionsCollection.Utils.CUtils import *
 # --------------------------------------------------------------------------------------------------------------
 # this interface library
 #
-LIBRARY_VERSION      = "0.6.1"
-LIBRARY_VERSION_DATE = "17.06.2024"
+LIBRARY_VERSION      = "0.7.0"
+LIBRARY_VERSION_DATE = "17.10.2024"
 #
 THISMODULENAME = "prometheus_interface.py"
 THISMODULE     = f"{THISMODULENAME} v. {LIBRARY_VERSION} / {LIBRARY_VERSION_DATE}"
@@ -62,9 +62,11 @@ For this purpose the 'Prometheus Python client library' is used.
       self.__port_number   = port_number
 
       # prometheus metric types
-      self.__dictCounter = {}
-      self.__dictGauges  = {}
-      self.__dictInfos   = {}
+      self.__dictCounter    = {}
+      self.__dictGauges     = {}
+      self.__dictInfos      = {}
+      self.__dictSummaries  = {}
+      self.__dictHistograms = {}
 
       start_http_server(self.__port_number)
 
@@ -82,6 +84,24 @@ For this purpose the 'Prometheus Python client library' is used.
       del self.__dictCounter
       del self.__dictGauges
       del self.__dictInfos
+      del self.__dictSummaries
+
+   # --------------------------------------------------------------------------------------------------------------
+
+   def convert_to_int_or_float(self, value):
+      """Little helper to convert a string value to an integer or a float
+      """
+      try:
+         converted_value = int(value)
+         return converted_value # is int
+      except ValueError:
+         pass
+      try:
+         converted_value = float(value)
+         return converted_value # is float
+      except ValueError:
+         pass
+      return None # not int and not float
 
    # --------------------------------------------------------------------------------------------------------------
    # -- library informations
@@ -121,7 +141,41 @@ For this purpose the 'Prometheus Python client library' is used.
 
    @keyword
    def add_info(self, name=None, description=None, labels=None):
-      """add_info
+      """This keyword adds a new info. The content of an existing info can be defined with ``set_info``.
+
+**Arguments:**
+
+* ``name``
+
+  The name of the new info
+
+  / *Condition*: required / *Type*: str /
+
+* ``description``
+
+  The description of the new info
+
+  / *Condition*: required / *Type*: str /
+
+* ``labels``
+
+  A semicolon separated list of label names assigned to the new info
+
+  / *Condition*: optional / *Type*: str  / *Default*: None /
+
+**Returns:**
+
+* ``success``
+
+  / *Type*: bool /
+
+  Indicates if the computation of the keyword was successful or not
+
+* ``result``
+
+  / *Type*: str /
+
+  The result of the computation of the keyword
       """
       success = False
       result  = "UNKNOWN"
@@ -155,7 +209,41 @@ For this purpose the 'Prometheus Python client library' is used.
 
    @keyword
    def set_info(self, name=None, info=None, labels=None):
-      """set_info
+      """This keyword defines the content of an info. The info has to be added with '``add_info``' before.
+
+**Arguments:**
+
+* ``name``
+
+  The name of the info
+
+  / *Condition*: required / *Type*: str /
+
+* ``info``
+
+  The info itself (every info is a key-value information).
+
+  / *Condition*: required / *Type*: dict /
+
+* ``labels``
+
+  A semicolon separated list of labels assigned to the info. The order of labels must fit to the order of label names like defined in ``add_info``.
+
+  / *Condition*: optional / *Type*: str  / *Default*: None /
+
+**Returns:**
+
+* ``success``
+
+  / *Type*: bool /
+
+  Indicates if the computation of the keyword was successful or not
+
+* ``result``
+
+  / *Type*: str /
+
+  The result of the computation of the keyword
       """
       success = False
       result  = "UNKNOWN"
@@ -205,27 +293,6 @@ For this purpose the 'Prometheus Python client library' is used.
          listResults.append(f"with labels: '{labels}'")
       result = " ".join(listResults)
       return success, result
-
-
-# TODO lighting reaktivieren (as example)
-
-   # # @keyword
-   # # def add_lighting(self):
-      # # """add_lighting (experimental only)
-      # # """
-      # # self.__oLighting = Info('lighting', ': kind of lighting')
-
-   # # @keyword
-   # # def set_daylight(self):
-      # # """set_daylight (experimental only)
-      # # """
-      # # self.__oLighting.info({'lighting' : 'daylight'})
-
-   # # @keyword
-   # # def set_nightlight(self):
-      # # """set_nightlight (experimental only)
-      # # """
-      # # self.__oLighting.info({'lighting' : 'nightlight'})
 
 
    # --------------------------------------------------------------------------------------------------------------
@@ -692,6 +759,303 @@ For this purpose the 'Prometheus Python client library' is used.
       return success, result
    # eof def dec_gauge(...):
 
+
+   # --------------------------------------------------------------------------------------------------------------
+   # -- prometheus metric type 'Summary'
+   # --------------------------------------------------------------------------------------------------------------
+   #TM***
+
+   @keyword
+   def add_summary(self, name=None, description=None, labels=None):
+      """This keyword adds a new summary. The values of existing summaries can be set with ``observe_summary```.
+
+**Arguments:**
+
+* ``name``
+
+  The name of the new summary
+
+  / *Condition*: required / *Type*: str /
+
+* ``description``
+
+  The description of the new summary
+
+  / *Condition*: required / *Type*: str /
+
+* ``labels``
+
+  A semicolon separated list of label names assigned to the new summary
+
+  / *Condition*: optional / *Type*: str  / *Default*: None /
+
+**Returns:**
+
+* ``success``
+
+  / *Type*: bool /
+
+  Indicates if the computation of the keyword was successful or not
+
+* ``result``
+
+  / *Type*: str /
+
+  The result of the computation of the keyword
+      """
+      success = False
+      result  = "UNKNOWN"
+      if name is None:
+         result = "Parameter 'name' not defined"
+         return success, result
+      if description is None:
+         result = "Parameter 'description' not defined"
+         return success, result
+      if name in self.__dictSummaries:
+         result = f"A summary with name '{name}' is already defined"
+         return success, result
+      oSummary = None
+      if labels is None:
+         oSummary = Summary(name, description)
+      else:
+         labellist = labels.split(';')
+         listLabelNames = []
+         for label in labellist:
+            label = label.strip()
+            listLabelNames.append(label)
+         oSummary = Summary(name, description, listLabelNames)
+      self.__dictSummaries[name] = oSummary
+      success = True
+      listResults = []
+      listResults.append(f"Summary '{name}' added")
+      if labels is not None:
+         listResults.append(f"with labels: '{labels}'")
+      result = " ".join(listResults)
+      return success, result
+   # eof def add_summary(...):
+
+   @keyword
+   def observe_summary(self, name=None, value=None, labels=None):
+      """This keyword observes a summary. The summary has to be added with '``add_summary``' before.
+
+**Arguments:**
+
+* ``name``
+
+  The name of the summary
+
+  / *Condition*: required / *Type*: str /
+
+* ``value``
+
+  The value assigned to the summary.
+
+  / *Condition*: required / *Type*: int or float /
+
+* ``labels``
+
+  A semicolon separated list of labels assigned to the summary. The order of labels must fit to the order of label names like defined in ``add_summary``.
+
+  / *Condition*: optional / *Type*: str  / *Default*: None /
+
+**Returns:**
+
+* ``success``
+
+  / *Type*: bool /
+
+  Indicates if the computation of the keyword was successful or not
+
+* ``result``
+
+  / *Type*: str /
+
+  The result of the computation of the keyword
+      """
+      success = False
+      result  = "UNKNOWN"
+      if name is None:
+         result = "Parameter 'name' not defined"
+         return success, result
+      if value is None:
+         result = "Parameter 'value' not defined"
+         return success, result
+      value_type = type(value)
+      value = self.convert_to_int_or_float(value)
+      if value is None:
+         success = False
+         result  = f"invalid type '{value_type}' of input parameter 'value'; expected int or float"
+         return success, result
+      if name not in self.__dictSummaries:
+         result = f"Summary '{name}' not defined"
+         return success, result
+      oSummary = self.__dictSummaries[name]
+      if labels is None:
+         oSummary.observe(value)
+      else:
+         labellist = labels.split(';')
+         listLabelValues = []
+         for label in labellist:
+            label = label.strip()
+            listLabelValues.append(label)
+         oSummary.labels(*listLabelValues).observe(value)
+      success = True
+      listResults = []
+      listResults.append(f"Summary '{name}' observed value {value}")
+      if labels is not None:
+         listResults.append(f"with labels: '{labels}'")
+      result = " ".join(listResults)
+      return success, result
+   # eof def observe_summary(...):
+
+
+   # --------------------------------------------------------------------------------------------------------------
+   # -- prometheus metric type 'Histogram'
+   # --------------------------------------------------------------------------------------------------------------
+   #TM***
+
+   @keyword
+   def add_histogram(self, name=None, description=None, labels=None):
+      """This keyword adds a new histogram. The values of existing histograms can be set with ``observe_histogram```.
+
+**Arguments:**
+
+* ``name``
+
+  The name of the new histogram
+
+  / *Condition*: required / *Type*: str /
+
+* ``description``
+
+  The description of the new histogram
+
+  / *Condition*: required / *Type*: str /
+
+* ``labels``
+
+  A semicolon separated list of label names assigned to the new histogram
+
+  / *Condition*: optional / *Type*: str  / *Default*: None /
+
+**Returns:**
+
+* ``success``
+
+  / *Type*: bool /
+
+  Indicates if the computation of the keyword was successful or not
+
+* ``result``
+
+  / *Type*: str /
+
+  The result of the computation of the keyword
+      """
+      success = False
+      result  = "UNKNOWN"
+      if name is None:
+         result = "Parameter 'name' not defined"
+         return success, result
+      if description is None:
+         result = "Parameter 'description' not defined"
+         return success, result
+      if name in self.__dictHistograms:
+         result = f"A histogram with name '{name}' is already defined"
+         return success, result
+      oHistogram = None
+      if labels is None:
+         oHistogram = Histogram(name, description)
+      else:
+         labellist = labels.split(';')
+         listLabelNames = []
+         for label in labellist:
+            label = label.strip()
+            listLabelNames.append(label)
+         oHistogram = Histogram(name, description, listLabelNames)
+      self.__dictHistograms[name] = oHistogram
+      success = True
+      listResults = []
+      listResults.append(f"Summary '{name}' added")
+      if labels is not None:
+         listResults.append(f"with labels: '{labels}'")
+      result = " ".join(listResults)
+      return success, result
+   # eof def add_histogram(...):
+
+   @keyword
+   def observe_histogram(self, name=None, value=None, labels=None):
+      """This keyword observes a histogram. The histogram has to be added with '``add_histogram``' before.
+
+**Arguments:**
+
+* ``name``
+
+  The name of the histogram
+
+  / *Condition*: required / *Type*: str /
+
+* ``value``
+
+  The value assigned to the histogram.
+
+  / *Condition*: required / *Type*: int or float /
+
+* ``labels``
+
+  A semicolon separated list of labels assigned to the histogram. The order of labels must fit to the order of label names like defined in ``add_histogram``.
+
+  / *Condition*: optional / *Type*: str  / *Default*: None /
+
+**Returns:**
+
+* ``success``
+
+  / *Type*: bool /
+
+  Indicates if the computation of the keyword was successful or not
+
+* ``result``
+
+  / *Type*: str /
+
+  The result of the computation of the keyword
+      """
+      success = False
+      result  = "UNKNOWN"
+      if name is None:
+         result = "Parameter 'name' not defined"
+         return success, result
+      if value is None:
+         result = "Parameter 'value' not defined"
+         return success, result
+      value_type = type(value)
+      value = self.convert_to_int_or_float(value)
+      if value is None:
+         success = False
+         result  = f"invalid type '{value_type}' of input parameter 'value'; expected int or float"
+         return success, result
+      if name not in self.__dictHistograms:
+         result = f"Histogram '{name}' not defined"
+         return success, result
+      oHistogram = self.__dictHistograms[name]
+      if labels is None:
+         oHistogram.observe(value)
+      else:
+         labellist = labels.split(';')
+         listLabelValues = []
+         for label in labellist:
+            label = label.strip()
+            listLabelValues.append(label)
+         oHistogram.labels(*listLabelValues).observe(value)
+      success = True
+      listResults = []
+      listResults.append(f"Histogram '{name}' observed value {value}")
+      if labels is not None:
+         listResults.append(f"with labels: '{labels}'")
+      result = " ".join(listResults)
+      return success, result
+   # eof def observe_histogram(...):
 
 # eof class prometheus_interface():
 
