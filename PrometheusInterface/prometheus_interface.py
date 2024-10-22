@@ -32,8 +32,8 @@ from PythonExtensionsCollection.Utils.CUtils import *
 # --------------------------------------------------------------------------------------------------------------
 # this interface library
 #
-LIBRARY_VERSION      = "0.7.0"
-LIBRARY_VERSION_DATE = "17.10.2024"
+LIBRARY_VERSION      = "0.8.0"
+LIBRARY_VERSION_DATE = "21.10.2024"
 #
 THISMODULENAME = "prometheus_interface.py"
 THISMODULE     = f"{THISMODULENAME} v. {LIBRARY_VERSION} / {LIBRARY_VERSION_DATE}"
@@ -73,7 +73,7 @@ For this purpose the 'Prometheus Python client library' is used.
       # default info metric about this interface library
       oInfo = Info("Prometheus_interface", "Prometheus interface info")
       dictInfo = {}
-      dictInfo['file name'] = THISMODULENAME
+      dictInfo['file_name'] = THISMODULENAME
       dictInfo['version']   = LIBRARY_VERSION
       dictInfo['date']      = LIBRARY_VERSION_DATE
       dictInfo['location']  = self.where_am_i()
