@@ -19,13 +19,13 @@ Library    Collections
 Library    BuiltIn
 
 # specific libraries
-Library    RobotframeworkExtensions.Collection    WITH NAME    rf.extensions
+Library    RobotframeworkExtensions.Collection    AS    rf.extensions
 
 # # >>> Prometheus interface
 # # repository local Prometheus interface
-# # Library    ../../../PrometheusInterface/prometheus_interface.py    port_number=${8002}    WITH NAME    rf.prometheus_interface
+# # Library    ../../../PrometheusInterface/prometheus_interface.py    port_number=${8002}    AS    rf.prometheus_interface
 # #
 # # installed Prometheus interface
-Library    %{ROBOTPYTHONSITEPACKAGESPATH}/PrometheusInterface/prometheus_interface.py    port_number=${8002}    WITH NAME    rf.prometheus_interface
+Library    %{ROBOTPYTHONSITEPACKAGESPATH}/PrometheusInterface/prometheus_interface.py    port_number=${8002}    AS    rf.prometheus_interface
 # # <<< prometheus interface
 

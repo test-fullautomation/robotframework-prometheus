@@ -17,7 +17,7 @@ Documentation    Setup and teardown of suite, including the setup of Prometheus 
 
 Resource    ./resources.resource
 
-Library    RobotFramework_TestsuitesManagement    WITH NAME    tm
+Library    RobotFramework_TestsuitesManagement    AS    tm
 
 Suite Setup       Prometheus Suite Setup
 Suite Teardown    Prometheus Suite Teardown
