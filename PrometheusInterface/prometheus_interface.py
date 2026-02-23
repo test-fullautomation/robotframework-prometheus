@@ -1,4 +1,4 @@
-#  Copyright 2020-2024 Robert Bosch GmbH
+#  Copyright 2020-2026 Robert Bosch GmbH
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ from PythonExtensionsCollection.Utils.CUtils import *
 # --------------------------------------------------------------------------------------------------------------
 # this interface library
 #
-LIBRARY_VERSION      = "0.8.0"
-LIBRARY_VERSION_DATE = "21.10.2024"
+LIBRARY_VERSION      = "0.9.0"
+LIBRARY_VERSION_DATE = "23.02.2026"
 #
 THISMODULENAME = "prometheus_interface.py"
 THISMODULE     = f"{THISMODULENAME} v. {LIBRARY_VERSION} / {LIBRARY_VERSION_DATE}"

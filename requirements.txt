@@ -1,6 +1,0 @@
-robotframework
-colorama
-pypandoc
-GenPackageDoc
-PythonExtensionsCollection
-prometheus-client
