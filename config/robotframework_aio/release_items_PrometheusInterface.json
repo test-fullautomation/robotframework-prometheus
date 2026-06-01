@@ -1,6 +1,6 @@
 # **************************************************************************************************************
 #
-# Copyright 2020-2024 Robert Bosch GmbH
+# Copyright 2020-2026 Robert Bosch GmbH
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -98,6 +98,13 @@ References:
 * `Summary <https://prometheus.github.io/client_python/instrumenting/summary/>`_
 * `Histogram <https://prometheus.github.io/client_python/instrumenting/histogram/>`_
 "
-                                       ]
+                                       ],
+                   "1.0.0.;1.1.0." : [
+"
+* Usage of **Setuptools** replaced by usage of **PIP/TOML/Setuptools**.
+
+  Details about how to install the component with PIP, can be found in the `README <https://github.com/test-fullautomation/robotframework-prometheus/blob/develop/README.rst>`__
+"
+                   ]
                  }
 }
