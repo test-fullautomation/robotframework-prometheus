@@ -119,7 +119,7 @@ To support a better readibility of the test code we recommend to import the inte
 
 \begin{robotcode}
 *** Settings ***
-Library    %{ROBOTPYTHONSITEPACKAGESPATH}/PrometheusInterface/prometheus_interface.py    port_number=${8001}    WITH NAME    rf.prometheus_interface
+Library    %{ROBOTPYTHONSITEPACKAGESPATH}/PrometheusInterface/prometheus_interface.py    port_number=${8001}    AS    rf.prometheus_interface
 \end{robotcode}
 
 With \rcode{rf} is the abbreviation of \textbf{Robot Framework}.
